@@ -1,0 +1,33 @@
+#!/usr/bin/env sh
+# #
+# An example hook script to verify what is about to be committed.
+# Called by "git commit" with no arguments.  The hook should
+# exit with non-zero status after issuing an appropriate message if
+# it wants to stop the commit.
+#
+# To enable this hook, rename this file to "pre-commit".
+PWD=`pwd`
+globalEmail=`git config --global --get user.email`
+workEmail="rabin.ghimire@fusemachines.com"
+
+if [[ $PWD != "*demo*" && $globalEmail != $workEmail ]];
+then
+        echo "Commit email and global git config email differ"
+        echo "Global commit email: "$globalEmail""
+        echo "Committing email expected: $workEmail"
+        exit 1
+else
+         echo ""
+         exit 0
+ fi
+
+ function has_trailing_whitespaces() {
+   git diff --check --cached || return 1 # Return 1 if there are trailing whitespaces
+ }
+ if has_trailing_whitespaces; then
+   echo "ERROR: Trailing whitespaces found in the commit."
+   echo "Please remove them before committing."
+   exit 1
+ fi
+
+ exit 0
